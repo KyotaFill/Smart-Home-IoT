@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🏠 Smart Home IoT
+#  Smart Home IoT
 
 **Hệ Thống Giám Sát & Điều Khiển Nhà Thông Minh**
 
@@ -15,29 +15,29 @@
 
 ---
 
-## 📖 Giới thiệu dự án
+##  Giới thiệu dự án
 
 **Smart Home IoT** là dự án mô phỏng hệ thống nhà thông minh toàn diện, cho phép người dùng giám sát môi trường sống và điều khiển các thiết bị điện từ xa thông qua giao diện Web Dashboard (Node-RED). Dự án sử dụng vi điều khiển ESP32, giao thức nhắn tin thời gian thực MQTT và được mô phỏng hoàn toàn bằng phần mềm Wokwi.
 
-## ✨ Tính năng nổi bật
+##  Tính năng nổi bật
 
-### 📊 1. Giám sát thời gian thực
+###  1. Giám sát thời gian thực
 - **Nhiệt độ & Độ ẩm:** Thu thập dữ liệu liên tục từ cảm biến DHT22.
 - **Ánh sáng:** Theo dõi cường độ sáng môi trường qua quang trở (LDR).
 - **Lưu trữ lịch sử:** Biểu đồ dạng đường (Line Chart) theo dõi biến thiên Nhiệt/Ẩm theo thời gian.
 
-### 🕹️ 2. Điều khiển từ xa
+###  2. Điều khiển từ xa
 - **Hệ thống chiếu sáng:** Bật/Tắt đèn LED trực tiếp từ xa thông qua công tắc trên Dashboard.
 - **Rèm cửa/Cửa tự động:** Điều khiển mượt mà góc quay của động cơ Servo (0-180 độ) thông qua thanh trượt Slider.
 
-### 🤖 3. Tự động hóa & Cảnh báo an toàn
+###  3. Tự động hóa & Cảnh báo an toàn
 - **Báo cháy/Quá nhiệt:** Khi nhiệt độ vượt ngưỡng an toàn (**>35°C**), hệ thống tự động:
   - Kích hoạt **Còi hú (Buzzer)** cảnh báo tại phần cứng.
   - Hiển thị **Popup (Toast)** cảnh báo khẩn cấp màu đỏ trên màn hình Dashboard của người dùng.
 
 ---
 
-## 🛠️ Kiến trúc hệ thống
+##  Kiến trúc hệ thống
 
 Dự án được chia thành 2 phần chính hoạt động độc lập và giao tiếp qua MQTT:
 
@@ -52,7 +52,7 @@ Dự án được chia thành 2 phần chính hoạt động độc lập và gi
 
 ---
 
-## 📂 Cấu trúc thư mục
+##  Cấu trúc thư mục
 
 ```text
 IOT_4/
@@ -70,7 +70,7 @@ IOT_4/
 
 ---
 
-## 🚀 Hướng dẫn cài đặt & Chạy thử nghiệm
+##  Hướng dẫn cài đặt & Chạy thử nghiệm
 
 ### Yêu cầu chuẩn bị
 - Visual Studio Code đã cài đặt extension **PlatformIO** và **Wokwi Simulator**.
