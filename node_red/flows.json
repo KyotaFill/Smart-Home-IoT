@@ -1,0 +1,318 @@
+[
+    {
+        "id": "flow_1",
+        "type": "tab",
+        "label": "Smart Home Dashboard",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "group1",
+        "type": "ui_group",
+        "name": "Môi Trường",
+        "tab": "tab1",
+        "order": 1,
+        "disp": true,
+        "width": "12",
+        "collapse": false
+    },
+    {
+        "id": "group2",
+        "type": "ui_group",
+        "name": "Điều Khiển Nhà",
+        "tab": "tab1",
+        "order": 2,
+        "disp": true,
+        "width": "12",
+        "collapse": false
+    },
+    {
+        "id": "tab1",
+        "type": "ui_tab",
+        "name": "Smart Home",
+        "icon": "home",
+        "order": 1
+    },
+    {
+        "id": "mqtt_broker",
+        "type": "mqtt-broker",
+        "name": "HiveMQ Public Broker",
+        "broker": "broker.hivemq.com",
+        "port": "1883",
+        "clientid": "",
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true
+    },
+    {
+        "id": "mqtt_in",
+        "type": "mqtt in",
+        "z": "flow_1",
+        "name": "Nhận Dữ Liệu",
+        "topic": "iot/myhome_999/sensor/data",
+        "qos": "0",
+        "datatype": "auto",
+        "broker": "mqtt_broker",
+        "x": 110,
+        "y": 140,
+        "wires": [
+            [
+                "json_parse"
+            ]
+        ]
+    },
+    {
+        "id": "json_parse",
+        "type": "json",
+        "z": "flow_1",
+        "name": "JSON",
+        "property": "payload",
+        "action": "obj",
+        "pretty": false,
+        "x": 250,
+        "y": 140,
+        "wires": [
+            [
+                "function_split"
+            ]
+        ]
+    },
+    {
+        "id": "function_split",
+        "type": "function",
+        "z": "flow_1",
+        "name": "Tách Data & Cảnh Báo",
+        "func": "var msgTemp = { payload: msg.payload.temperature, topic: \"Nhiệt Độ\" };\nvar msgHum = { payload: msg.payload.humidity, topic: \"Độ Ẩm\" };\nvar msgLight = { payload: msg.payload.light, topic: \"Ánh Sáng\" };\n\nvar msgBuzzer = null;\nvar msgAlert = null;\n\n// Logic Tự động hóa: Cảnh báo nhiệt độ > 35\nif (msg.payload.temperature > 35) {\n    msgBuzzer = { payload: \"ON\", topic: \"iot/myhome_999/buzzer/control\" };\n    msgAlert = { payload: \"CẢNH BÁO: Nhiệt độ quá nóng (>35°C)!\" };\n} else {\n    msgBuzzer = { payload: \"OFF\", topic: \"iot/myhome_999/buzzer/control\" };\n}\n\nreturn [msgTemp, msgHum, msgLight, msgBuzzer, msgAlert];",
+        "outputs": 5,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 440,
+        "y": 140,
+        "wires": [
+            [
+                "gauge_temp",
+                "chart_all"
+            ],
+            [
+                "gauge_hum",
+                "chart_all"
+            ],
+            [
+                "gauge_light"
+            ],
+            [
+                "mqtt_out_buzzer"
+            ],
+            [
+                "toast_alert"
+            ]
+        ]
+    },
+    {
+        "id": "gauge_temp",
+        "type": "ui_gauge",
+        "z": "flow_1",
+        "name": "Nhiệt Độ",
+        "group": "group1",
+        "order": 1,
+        "width": 4,
+        "height": 4,
+        "gtype": "gage",
+        "title": "Nhiệt Độ",
+        "label": "°C",
+        "format": "{{value}}",
+        "min": 0,
+        "max": 50,
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "x": 720,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "gauge_hum",
+        "type": "ui_gauge",
+        "z": "flow_1",
+        "name": "Độ Ẩm",
+        "group": "group1",
+        "order": 2,
+        "width": 4,
+        "height": 4,
+        "gtype": "gage",
+        "title": "Độ Ẩm",
+        "label": "%",
+        "format": "{{value}}",
+        "min": 0,
+        "max": 100,
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "x": 710,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "gauge_light",
+        "type": "ui_gauge",
+        "z": "flow_1",
+        "name": "Ánh Sáng",
+        "group": "group1",
+        "order": 3,
+        "width": 4,
+        "height": 4,
+        "gtype": "gage",
+        "title": "Ánh Sáng",
+        "label": "%",
+        "format": "{{value}}",
+        "min": 0,
+        "max": 100,
+        "colors": [
+            "#222222",
+            "#e6e600",
+            "#ffff00"
+        ],
+        "x": 720,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "chart_all",
+        "type": "ui_chart",
+        "z": "flow_1",
+        "name": "Biểu Đồ Lịch Sử",
+        "group": "group1",
+        "order": 4,
+        "width": 12,
+        "height": 4,
+        "label": "Lịch Sử (Temp/Hum)",
+        "chartType": "line",
+        "legend": "true",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "0",
+        "ymax": "100",
+        "removeOlder": 1,
+        "removeOlderPoints": "",
+        "removeOlderUnit": "3600",
+        "cutout": 0,
+        "useOneColor": false,
+        "x": 740,
+        "y": 180,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "mqtt_out_buzzer",
+        "type": "mqtt out",
+        "z": "flow_1",
+        "name": "Lệnh Buzzer",
+        "topic": "",
+        "qos": "0",
+        "retain": "",
+        "broker": "mqtt_broker",
+        "x": 730,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "toast_alert",
+        "type": "ui_toast",
+        "z": "flow_1",
+        "position": "top right",
+        "displayTime": "3",
+        "highlight": "red",
+        "sendall": true,
+        "outputs": 0,
+        "ok": "OK",
+        "cancel": "",
+        "raw": false,
+        "className": "",
+        "topic": "",
+        "name": "Popup Cảnh Báo",
+        "x": 740,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "switch_led",
+        "type": "ui_switch",
+        "z": "flow_1",
+        "name": "Công Tắc Đèn",
+        "label": "Bật/Tắt Đèn (LED)",
+        "tooltip": "",
+        "group": "group2",
+        "order": 1,
+        "width": 6,
+        "height": 2,
+        "passthru": true,
+        "decouple": "false",
+        "topic": "iot/myhome_999/led/control",
+        "topicType": "str",
+        "style": "",
+        "onvalue": "ON",
+        "onvalueType": "str",
+        "onicon": "",
+        "oncolor": "",
+        "offvalue": "OFF",
+        "offvalueType": "str",
+        "officon": "",
+        "offcolor": "",
+        "x": 130,
+        "y": 380,
+        "wires": [
+            [
+                "mqtt_out_actuators"
+            ]
+        ]
+    },
+    {
+        "id": "slider_servo",
+        "type": "ui_slider",
+        "z": "flow_1",
+        "name": "Cửa / Rèm (Servo)",
+        "label": "Mở Cửa (Góc quay Servo)",
+        "tooltip": "",
+        "group": "group2",
+        "order": 2,
+        "width": 6,
+        "height": 2,
+        "passthru": true,
+        "outs": "all",
+        "topic": "iot/myhome_999/servo/control",
+        "topicType": "str",
+        "min": 0,
+        "max": 180,
+        "step": 1,
+        "className": "",
+        "x": 150,
+        "y": 440,
+        "wires": [
+            [
+                "mqtt_out_actuators"
+            ]
+        ]
+    },
+    {
+        "id": "mqtt_out_actuators",
+        "type": "mqtt out",
+        "z": "flow_1",
+        "name": "Gửi Lệnh (Đèn / Servo)",
+        "topic": "",
+        "qos": "0",
+        "retain": "",
+        "broker": "mqtt_broker",
+        "x": 420,
+        "y": 420,
+        "wires": []
+    }
+]
